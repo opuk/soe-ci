@@ -37,6 +37,7 @@ do
     then
         /usr/bin/hammer template update --id ${id} --file ${I} --type ${ttype}
     else
+        ttype="provision"
         /usr/bin/hammer template create --file ${I} --name \"${name}\" --type ${ttype}
     fi
 
