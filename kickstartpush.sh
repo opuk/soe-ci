@@ -37,7 +37,7 @@ do
     then
         /usr/bin/hammer template update --id ${id} --file ${I} --type ${ttype}
     else
-        /usr/bin/hammer template create --file kickstarts/${I} --name \"${name}\" --type ${ttype}
+        /usr/bin/hammer template create --file ${I} --name \"${name}\" --type ${ttype}
     fi
 
 done
