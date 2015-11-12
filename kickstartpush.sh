@@ -35,7 +35,7 @@ do
     ttype=$(sed -n 's/^kind:\s*\(.*\)/\1/p' ${I})
     if [[ ${id} -ne 0 ]]
     then
-        /usr/bin/hammer template update --id ${id} --file kickstarts/${I} --type ${ttype}
+        /usr/bin/hammer template update --id ${id} --file ${I} --type ${ttype}
     else
         /usr/bin/hammer template create --file kickstarts/${I} --name \"${name}\" --type ${ttype}
     fi
