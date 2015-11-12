@@ -16,8 +16,7 @@ IFS=',' CV_LIST=( ${CV} ${CV_PASSIVE_LIST} )
 
 for cv in "${CV_LIST[@]}"
 do
-    ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-	    "hammer content-view publish --name \"${cv}\" --organization \"${ORG}\" --description \"Build ${BUILD_URL}\"" || \
+	    hammer content-view publish --name \"${cv}\" --organization \"${ORG}\" --description \"Build ${BUILD_URL}\" || \
 		{ err "Content view '${cv}' couldn't be published."; exit 1; }
 
     # get the latest version of each CV, add it to the array
@@ -100,9 +99,8 @@ then
         cv=${CV_LIST[$i]}
         ver_id=${VER_ID_LIST[$i]}
 
-        ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-        "hammer content-view version promote --content-view \"${cv}\" --organization \"${ORG}\" \
-        --to-lifecycle-environment-id \"${TESTVM_ENV}\" --id ${ver_id}"
+        hammer content-view version promote --content-view \"${cv}\" --organization \"${ORG}\" \
+        --to-lifecycle-environment-id \"${TESTVM_ENV}\" --id ${ver_id}
     done
 
     # we also promote the latest version of each CCV
