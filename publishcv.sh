@@ -16,7 +16,7 @@ IFS=',' CV_LIST=( ${CV} ${CV_PASSIVE_LIST} )
 
 for cv in "${CV_LIST[@]}"
 do
-	    hammer content-view publish --name \"${cv}\" --organization \"${ORG}\" --description \"Build ${BUILD_URL}\" || \
+	    "hammer content-view publish --name \"${cv}\" --organization \"${ORG}\" --description \"Build ${BUILD_URL}\"" || \
 		{ err "Content view '${cv}' couldn't be published."; exit 1; }
 
     # get the latest version of each CV, add it to the array
