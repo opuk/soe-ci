@@ -16,12 +16,12 @@ IFS=',' CV_LIST=( ${CV} ${CV_PASSIVE_LIST} )
 
 for cv in "${CV_LIST[@]}"
 do
-	    "hammer content-view publish --name \"${cv}\" --organization \"${ORG}\" --description \"Build ${BUILD_URL}\"" || \
+	    "/usr/bin/hammer content-view publish --name \"${cv}\" --organization \"${ORG}\" --description \"Build ${BUILD_URL}\"" || \
 		{ err "Content view '${cv}' couldn't be published."; exit 1; }
 
     # get the latest version of each CV, add it to the array
     VER_ID_LIST+=( "$(ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-	"hammer content-view info --name \"${cv}\" --organization \"${ORG}\" \
+	"/usr/bin/hammer content-view info --name \"${cv}\" --organization \"${ORG}\" \
 	| grep \"ID:\" | tail -1 | tr -d ' ' | cut -f2 -d ':'")" )
 done
 
@@ -38,14 +38,14 @@ then # we want to update and publish all CCVs containing our CVs
         ver_id=${VER_ID_LIST[$i]}
 
         CV_VER_SED+="$(ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-            "hammer --csv content-view version list --content-view \"${cv}\" --organization \"${ORG}\"" | awk -F',' -v ver_id="${ver_id}" '
+            "/usr/bin/hammer --csv content-view version list --content-view \"${cv}\" --organization \"${ORG}\"" | awk -F',' -v ver_id="${ver_id}" '
                 $1 != "ID" && $1 != ver_id {ids="s/," $1 ",/," ver_id ",/;" ids}
                 END {print ids}')"
     done
 
     # Create an array of composite content view IDs matching the given pattern
     CCV_TMP_IDS=( $(ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-        "hammer --csv content-view list --organization \"${ORG}\" --search \"${CCV_NAME_PATTERN}\"" | awk -F, '$1 ~ /^[0-9]+$/ {print $1}') )
+        "/usr/bin/hammer --csv content-view list --organization \"${ORG}\" --search \"${CCV_NAME_PATTERN}\"" | awk -F, '$1 ~ /^[0-9]+$/ {print $1}') )
 
     # We need at the same time to find out which of the CCVs use the given CV
     # as well as keep the ID of all other used CV versions, but filter out
@@ -53,7 +53,7 @@ then # we want to update and publish all CCVs containing our CVs
     for ccv_id in ${CCV_TMP_IDS[@]}
     do
 	cv_tmp_ver_ids=$(ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-            "hammer --output yaml content-view info --id ${ccv_id} --organization \"${ORG}\"" \
+            "/usr/bin/hammer --output yaml content-view info --id ${ccv_id} --organization \"${ORG}\"" \
 	    | awk -F': *' '
 	        $1 == "Components" {cmp = 1; next}
 	        {if (!cmp) next}
@@ -99,7 +99,7 @@ then
         cv=${CV_LIST[$i]}
         ver_id=${VER_ID_LIST[$i]}
 
-        hammer content-view version promote --content-view \"${cv}\" --organization \"${ORG}\" \
+        /usr/bin/hammer content-view version promote --content-view \"${cv}\" --organization \"${ORG}\" \
         --to-lifecycle-environment-id \"${TESTVM_ENV}\" --id ${ver_id}
     done
 
