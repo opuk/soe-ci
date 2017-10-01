@@ -22,7 +22,7 @@ then
 fi
 
 # setup artefacts environment
-ARTEFACTS=${WORKSPACE}/artefacts
+ARTEFACTS=${WORKSPACE}/artefacts/kickstarts
 mkdir -p $ARTEFACTS
 
 # copy erb files from one directory to the next, creating directory if needed
