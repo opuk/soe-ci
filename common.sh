@@ -43,9 +43,9 @@ MODIFIED_PUPPET_FILE=${WORKSPACE}/modified_puppet.track
 # get our test machines into an array variable TEST_VM_LIST
 function get_test_vm_list() {
 	local J=0
-	for I in $("/usr/bin/hammer host-collection hosts --organization \"${ORG}\" \
+	for I in $(/usr/bin/hammer host-collection hosts --organization \"${ORG}\" \
 			--name \"$TESTVM_HOSTCOLLECTION\" \
-		| tail -n +4 | cut -f2 -d \"|\" | head -n -1")
+		| tail -n +4 | cut -f2 -d \"|\" | head -n -1)
 	do
 		# If CONDITIONAL_VM_BUILD is 'true', only keep VMs commented
 		# with modified #content# as listed in $MODIFIED_CONTENT_FILE
