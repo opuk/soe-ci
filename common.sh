@@ -43,8 +43,7 @@ MODIFIED_PUPPET_FILE=${WORKSPACE}/modified_puppet.track
 # get our test machines into an array variable TEST_VM_LIST
 function get_test_vm_list() {
 	local J=0
-	for I in $(ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-		"hammer host-collection hosts --organization \"${ORG}\" \
+	for I in $("/usr/bin/hammer host-collection hosts --organization \"${ORG}\" \
 			--name \"$TESTVM_HOSTCOLLECTION\" \
 		| tail -n +4 | cut -f2 -d \"|\" | head -n -1")
 	do
@@ -54,8 +53,7 @@ function get_test_vm_list() {
 		# as it hints at a script change.
 		if [[ "${CONDITIONAL_VM_BUILD}" != 'true' ]] || \
 			[[ ! -s "${MODIFIED_CONTENT_FILE}" ]] || \
-			ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-			"hammer --output yaml host info --name \"${I}\"" \
+			"/usr/bin/hammer --output yaml host info --name \"${I}\"" \
 				| grep "^Comment:" \
 				| grep -Fqf "${MODIFIED_CONTENT_FILE}"
 		then

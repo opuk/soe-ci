@@ -29,7 +29,7 @@ for I in "${TEST_VM_LIST[@]}"
 do
     inform "Checking status of VM ID $I"
 
-    _PROBED_STATUS=$(ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} "hammer host status --id $I" | grep Power | cut -f2 -d: | tr -d ' ')
+    _PROBED_STATUS=$("/usr/bin/hammer host status --id $I" | grep Power | cut -f2 -d: | tr -d ' ')
 
     # different hypervisors report power status with different words. parse and get a single word per status
     # KVM uses running / shutoff
@@ -66,8 +66,7 @@ do
     if [[ ${_STATUS} == 'On' ]]
     then
         inform "Shutting down VM ID $I"
-        ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-            "hammer host stop --id $I"
+            "/usr/bin/hammer host stop --id $I"
     elif [[ ${_STATUS} == 'Off' ]]
     then
         inform "VM ID $I seems off already, no action done."

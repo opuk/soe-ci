@@ -35,8 +35,7 @@ done
 
 
 # use hammer on the satellite to push the modules into the repo
-ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-    "hammer repository synchronize --id ${PUPPET_REPO_ID}" || \
+    "/usr/bin/hammer repository synchronize --id ${PUPPET_REPO_ID}" || \
   { err "Repository '${PUPPET_REPO_ID}' couldn't be synchronized."; exit 1; }
 
 if [[ -z "${CV}" ]]
@@ -50,8 +49,7 @@ fi
 
 # list all the packages currently in the CV
 n=0
-for I in $(ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-    "hammer --csv content-view puppet-module list --content-view=\"${CV}\" --organization=\"${ORG}\"" | tail -n +2 | awk -F, '{printf "%s@%s\n",$2,$3}')
+for I in $("/usr/bin/hammer --csv content-view puppet-module list --content-view=\"${CV}\" --organization=\"${ORG}\"" | tail -n +2 | awk -F, '{printf "%s@%s\n",$2,$3}')
 do
     cv_mods[$n]=$I
     ((n+=1))
@@ -60,8 +58,7 @@ done
 # iterate over all modules in the repository and add ones that are missing to the CV
 # we always add by modulename and author as this ensures that we get the latest version
 # of the module when we republish the CV
-for I in $(ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-    "hammer --csv puppet-module list --repository-id ${PUPPET_REPO_ID}" | tail -n +2 | awk -F, '{printf "%s@%s\n",$2,$3}')
+for I in $("/usr/bin/hammer --csv puppet-module list --repository-id ${PUPPET_REPO_ID}" | tail -n +2 | awk -F, '{printf "%s@%s\n",$2,$3}')
 do
     mod_name=${I%%@*}
     mod_auth=${I##*@}
@@ -76,7 +73,6 @@ do
     done
     if [[ ${push} == 1 ]]
     then
-        ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-    "hammer content-view puppet-module add --author=${mod_auth} --name=${mod_name} --organization=\"${ORG}\" --content-view=\"${CV}\""
+    "/usr/bin/hammer content-view puppet-module add --author=${mod_auth} --name=${mod_name} --organization=\"${ORG}\" --content-view=\"${CV}\""
     fi
 done

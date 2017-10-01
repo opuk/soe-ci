@@ -25,8 +25,7 @@ do
         inform "Checking if test server $I has rebooted into OS so that tests can be run"
         inform "note that the Jenkins job definition may trigger a fresh installation,"
         inform "so check the console of $I if this step is taking too long."
-        status=$(ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-            "hammer host info --name $I | \
+        status=$("/usr/bin/hammer host info --name $I | \
             grep -e \"Managed.*yes\" -e \"Enabled.*yes\" -e \"Build.*no\" \
 		| wc -l")
         # Check if status is OK, ping reacts and SSH is there, then success!
@@ -56,8 +55,7 @@ for I in ${TEST_VM_LIST[@]}
 do
     # Check the host's entitlements
     inform "Checking entitlements for test server $I"
-    ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-        "hammer content-host info --name ${I} --organization \"${ORG}\""
+    "/usr/bin/hammer content-host info --name ${I} --organization \"${ORG}\""
 
     inform "Setting up ssh keys for test server $I"
     sed -i.bak "/^$I[, ]/d" ${KNOWN_HOSTS} # remove test server from the file

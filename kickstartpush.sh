@@ -31,14 +31,12 @@ for I in *.erb
 do
     name=$(sed -n 's/^name:\s*\(.*\)/\1/p' ${I})
     id=0
-    id=$(ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-            "/usr/bin/hammer --csv template list --per-page 9999" | grep "${name}" | cut -d, -f1)
+    id=$("/usr/bin/hammer --csv template list --per-page 9999" | grep "${name}" | cut -d, -f1)
     ttype=$(sed -n 's/^kind:\s*\(.*\)/\1/p' ${I})
     if [[ ${id} -ne 0 ]]
     then
-        ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} /usr/bin/hammer template update --id ${id} --file kickstarts/${I} --type ${ttype}
+        /usr/bin/hammer template update --id ${id} --file kickstarts/${I} --type ${ttype}
     else
-        ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-            "/usr/bin/hammer template create --file kickstarts/${I} --name \"${name}\" --type ${ttype} --organizations \"${ORG}\""
+        /usr/bin/hammer template create --file kickstarts/${I} --name \"${name}\" --type ${ttype} --organizations \"${ORG}\"
     fi
 done
