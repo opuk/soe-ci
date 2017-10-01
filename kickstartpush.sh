@@ -31,7 +31,7 @@ for I in *.erb
 do
     name=$(sed -n 's/^name:\s*\(.*\)/\1/p' ${I})
     id=0
-    id=$("/usr/bin/hammer --csv template list --per-page 9999" | grep "${name}" | cut -d, -f1)
+    id=$(/usr/bin/hammer --csv template list --per-page 9999 | grep "${name}" | cut -d, -f1)
     ttype=$(sed -n 's/^kind:\s*\(.*\)/\1/p' ${I})
     if [[ ${id} -ne 0 ]]
     then
